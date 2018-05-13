@@ -1,8 +1,7 @@
 ﻿IMPORT std;
-IMPORT DataScience.Tools.TransformTools AS t;
 
 EXPORT StringTools := MODULE
-    
+  
 
   EXPORT LongestWord (STRING InWords) := FUNCTION       
   /*------------------------------------------------------
@@ -53,8 +52,11 @@ EXPORT StringTools := MODULE
     split1 := DATASET(STD.Str.SplitWords(inString1, ' '), {STRING words;});
     split2 := DATASET(STD.Str.SplitWords(inString2, ' '), {STRING words;});
 
-    split1Proj := t.append(split1, UNSIGNED1, match, 1);
-    split2Proj := t.append(split2, UNSIGNED1, match, 1);
+    
+				// split1Proj := tt.append(split1, UNSIGNED1, match, 1);
+				split1Proj := PROJECT(split1, TRANSFORM({RECORDOF(LEFT); INTEGER match;}, SELF.match := 1; SELF := LEFT;));
+				split2Proj := PROJECT(split2, TRANSFORM({RECORDOF(LEFT); INTEGER match;}, SELF.match := 1; SELF := LEFT;));
+    // split2Proj := tt.append(split2, UNSIGNED1, match, 1);
 
     Allcomparisons := JOIN(split1Proj, split2Proj, 
                            LEFT.match = RIGHT.match, 
@@ -115,21 +117,18 @@ EXPORT StringTools := MODULE
     
     --------------------------------------------------------------------*/
     
-    aString := IF(TidyToo, std.Str.ToLowerCase(inStr), inStr);
-    inDSaddCol := t.append(regexDS, STRING, outString, '');
-    
-    outDS := ITERATE(inDSaddCol, 
+    LOCAL aString := IF(TidyToo, TRIM(std.Str.ToLowerCase(inStr), LEFT, RIGHT), inStr);
+    LOCAL regexDSBlankRow := DATASET([{' ',' '}], regexLoopRec);
+    LOCAL regexDSconcat := regexDSBlankRow + regexDS;
+    LOCAL inDSaddCol := PROJECT(regexDSconcat, TRANSFORM({RECORDOF(LEFT); STRING outString;}, SELF.outString := aString; SELF := LEFT;));
+
+    LOCAL outDS := ROLLUP(inDSaddCol, TRUE,
                 TRANSFORM(RECORDOF(LEFT), 
-                          firstRow := LEFT.Regex = '';
-                          inString := IF(firstRow, aString, LEFT.outString);
-                          SELF.outString := REGEXREPLACE(RIGHT.regex, inString, RIGHT.repl, NOCASE);
-                          SELF := RIGHT;));   
-                 
-    outStr := SET(outDS, outString)[COUNT(outDS)];
-    FinalOutStr := IF(TidyToo, TRIM(outStr, LEFT, RIGHT), outStr);
-    OUTPUT(outDS);
- 
-    RETURN FinalOutStr;
+                          SELF.outString := REGEXREPLACE(RIGHT.regex, LEFT.outString, RIGHT.repl, NOCASE);
+                          SELF := RIGHT;)); 
+                                                    
+    LOCAL outStr := SET(outDS, outString)[1]; 
+    RETURN outStr;
   END;
   
   

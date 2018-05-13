@@ -58,9 +58,8 @@ EXPORT TransformTools := MODULE
       inComm - the command to parse, in raw form, not string.
       -------------------------------------------------------------
   */
-     //IMPORT DataScience.Tools.transformTools as t;
-					     
-     LOCAL columns1 := t.names(inDS);
+	
+     LOCAL columns1 := tt.names(inDS);
      LOCAL columns2 := REGEXREPLACE(' ', columns1, '|', NOCASE);
      LOCAL columns3 := '\\b(' + columns2 + ')\\b';
      
@@ -143,10 +142,10 @@ EXPORT TransformTools := MODULE
       inDs - the dataset to change
       keepCols - the columns to keep
       -------------------------------------------------------------
-  */
+  */     
 						//This line is a bodge, yes. What it does is prevent an error when you select all columns in a DS
 						//Can happen, especially if you use this for function calls
-						LOCAL tempDS := t.append(inDS, INTEGER1, THISISATEMPORARYFIELDADDEDBYROBMANSFIELDON20180301, 1);
+						LOCAL tempDS := tt.append(inDS, INTEGER1, THISISATEMPORARYFIELDADDEDBYROBMANSFIELDON20180301, 1);
 			
 					 LOCAL dropCols := {RECORDOF(inDS) AND NOT [#EXPAND(keepCols)]};
       LOCAL outRec   := {RECORDOF(inDS) AND NOT dropCols};
@@ -167,7 +166,7 @@ EXPORT TransformTools := MODULE
 	
 						//This line is a bodge, yes. What it does is prevent an error when you select all columns in a DS
 						//Can happen, especially if you use this for function calls
-						LOCAL tempDS := t.append(inDS, INTEGER1, THISISATEMPORARYFIELDADDEDBYROBMANSFIELDON20180301, 1);
+						LOCAL tempDS := tt.append(inDS, INTEGER1, THISISATEMPORARYFIELDADDEDBYROBMANSFIELDON20180301, 1);
 						
       LOCAL dropCols := {RECORDOF(inDS) AND NOT [keepCols]};
       LOCAL outRec   := {RECORDOF(inDS) AND NOT dropCols};
@@ -194,7 +193,7 @@ EXPORT TransformTools := MODULE
     
     LOCAL outDS := PROJECT(inDS, 
               TRANSFORM(RECORDOF(LEFT), 
-                        #EXPAND(mutateCol) := #EXPAND(t.deSelfer(inDS, comm)); 
+                        #EXPAND(mutateCol) := #EXPAND(tt.deSelfer(inDS, comm)); 
                         SELF := LEFT));
     RETURN outDS;
    ENDMACRO;
@@ -235,7 +234,7 @@ EXPORT TransformTools := MODULE
   */
     LOCAL outDS := PROJECT(inDS, 
                 TRANSFORM({RECORDOF(LEFT), colType colName}, 
-                          SELF.colName := #EXPAND(t.deSelfer(inDS, comm));
+                          SELF.colName := #EXPAND(tt.deSelfer(inDS, comm));
                           SELF := LEFT));
     RETURN outDS;
   ENDMACRO;
@@ -279,7 +278,7 @@ EXPORT TransformTools := MODULE
   */
       
       LOCAL filterDSfromSet := DATASET(filterSetIn, {STRING match;});
-      LOCAL uniqueFilterDS := DEDUP(SORT(DISTRIBUTE(filterDSfromSet, HASH(match)), match, LOCAL), match, LOCAL);
+      LOCAL uniqueFilterDS  := DEDUP(SORT(DISTRIBUTE(filterDSfromSet, HASH(match)), match, LOCAL), match, LOCAL);
       LOCAL filteredDS := IF(isin,
                         JOIN(inDS, uniqueFilterDS, LEFT.aCol = RIGHT.match, TRANSFORM(RECORDOF(LEFT), SELF := LEFT), INNER),
                         JOIN(inDS, uniqueFilterDS, LEFT.aCol = RIGHT.match, TRANSFORM(RECORDOF(LEFT), SELF := LEFT), LEFT ONLY));  
@@ -305,7 +304,6 @@ EXPORT TransformTools := MODULE
       filterCol - the column in the dataset to filter by
       isin - do you want the filter to be in the column (true) or not (false)
       -------------------------------------------------------------*/
-						//IMPORT DataScience.Tools.transformTools as t;
 
       LOCAL FilterColDS := TABLE(filterDS, {TYPEOF(filterDS.filterCol) filterCol := filterDS.filterCol});
       LOCAL uniqueDS    := DEDUP(SORT(DISTRIBUTE(FilterColDS, HASH(filterCol)), filterCol, LOCAL), filterCol, LOCAL);
@@ -318,7 +316,7 @@ EXPORT TransformTools := MODULE
   ENDMACRO;  
   
   
-  EXPORT DISTINCT(inputDataSet, DedupOn, DistributeFlag = TRUE) := FUNCTIONMACRO
+  EXPORT DISTINCT_ASIS(inputDataSet, DedupOn, DistributeFlag = TRUE) := FUNCTIONMACRO
   /*  -------------------------------------------------------------
       Performs a dedup with optional distribution, if only DistributeOn 
       parameter given then it's sorted and deduped on the same value.
@@ -339,7 +337,7 @@ EXPORT TransformTools := MODULE
     RETURN dedDS;
   ENDMACRO;  
   
-  EXPORT DISTINCT_TXT(inputDataSet, DedupOn, DistributeFlag = TRUE) := FUNCTIONMACRO
+  EXPORT DISTINCT(inputDataSet, DedupOn, DistributeFlag = TRUE) := FUNCTIONMACRO
   /*  -------------------------------------------------------------
       Performs a dedup with optional distribution, if only DistributeOn 
       parameter given then it's sorted and deduped on the same value.
@@ -363,7 +361,7 @@ EXPORT TransformTools := MODULE
   
   
   
-  EXPORT ARRANGE(inputDataSet, SortOn, DistributeFlag = FALSE) := FUNCTIONMACRO
+  EXPORT ARRANGE_ASIS(inputDataSet, SortOn) := FUNCTIONMACRO
   /*  -------------------------------------------------------------
       Arranges the input data set by the given column name, takes a single
 						column (not a string, see ARRANGE_TXT for that functionality). 
@@ -377,16 +375,17 @@ EXPORT TransformTools := MODULE
       -------------------------------------------------------------
   */ 
    
-    LOCAL sortedDs := IF(DistributeFlag, 
-                    SORT(DISTRIBUTE(inputDataSet, HASH(SortOn)), SortOn, LOCAL), 
-                    SORT(inputDataSet, SortOn)
-                  );
+    LOCAL sortedDs := SORT(inputDataSet, SortOn);
+		// IF(DistributeFlag, 
+                    // SORT(DISTRIBUTE(inputDataSet, HASH(SortOn)), SortOn, LOCAL), 
+                    // SORT(inputDataSet, SortOn)
+                  // );
     
     RETURN sortedDs;
   ENDMACRO;
   
   
-  EXPORT ARRANGE_TXT(inputDataSet, SortOn, DistributeFlag = TRUE) := FUNCTIONMACRO
+  EXPORT ARRANGE(inputDataSet, SortOn) := FUNCTIONMACRO
   /*  -------------------------------------------------------------
       Arranges the input data set by the given column name, takes a 
 						string of column names in the form of 'col1, col2...' 
@@ -403,13 +402,13 @@ EXPORT TransformTools := MODULE
   
     // LOCAL distVar := STD.Str.SplitWords(SortOn,',')[1];
   
-    LOCAL sortedDs := IF(DistributeFlag, 
-                    SORT(DISTRIBUTE(inputDataSet, HASH(#EXPAND(SortOn))), #EXPAND(SortOn), LOCAL), 
-                    SORT(distdInDs, #EXPAND(SortOn))
-                  );
-    
+    // LOCAL sortedDs := IF(DistributeFlag, 
+                    // SORT(DISTRIBUTE(inputDataSet, HASH(#EXPAND(SortOn))), #EXPAND(SortOn), LOCAL), 
+                    // SORT(inputDataSet, #EXPAND(SortOn))
+                  // );
+    SORT(inputDataSet, #EXPAND(SortOn)
     RETURN sortedDs;
-  ENDMACRO;  
+  ENDMACRO; 
   
   EXPORT ARRANGEDISTINCT(inputDataSet, DedupOn, SortOn, DistOn, DistributeFlag = TRUE) := FUNCTIONMACRO
   /*  -------------------------------------------------------------
@@ -446,10 +445,8 @@ EXPORT TransformTools := MODULE
       -------------------------------------------------------------
   */ 
   
-      //IMPORT DataScience.Tools.transformTools as t;
-
-      LOCAL TempDS1  := t.rename(inDS, colName, grp);
-      LOCAL TempDS   := t.select_asis(TempDS1, grp);
+      LOCAL TempDS1  := tt.rename(inDS, colName, grp);
+      LOCAL TempDS   := tt.select_asis(TempDS1, grp);
       LOCAL CountRec := {grp := TempDS.grp; n := COUNT(GROUP)};
       LOCAL counts   := TABLE(TempDS, CountRec, grp, MERGE);
 			
@@ -475,9 +472,8 @@ EXPORT TransformTools := MODULE
       GroupColumns - the columns to group on
       -------------------------------------------------------------
   */ 
-      //IMPORT DataScience.Tools.transformTools as t;
 
-      LOCAL neededDS := t.select(inDS, GroupColumns);
+      LOCAL neededDS := tt.select(inDS, GroupColumns);
       LOCAL countRec := {neededDS; INTEGER n := COUNT(GROUP);};      
       LOCAL countTable := TABLE(neededDS, CountRec, #EXPAND(GroupColumns), MERGE);
       
@@ -485,8 +481,7 @@ EXPORT TransformTools := MODULE
     
   ENDMACRO;
   
-  
-  
+	
   EXPORT TO_CSV(inDataSet, outName, EXPIRY = 365) := FUNCTIONMACRO
     /*  -------------------------------------------------------------
       Writes a CSV without having to remember the whole syntax. 
@@ -516,15 +511,28 @@ EXPORT TransformTools := MODULE
     // LOCAL nameOut := IF(nameIn = '', REGEXREPLACE('[^a-z0-9]', #TEXT(inDataSet), '', NOCASE), REGEXREPLACE('[^a-z0-9]', nameIn, '', NOCASE));
     LOCAL nameOut := REGEXREPLACE('[^a-z0-9]', #TEXT(inDataSet), '', NOCASE);
     
-				//TODO: choosen()????
     RETURN OUTPUT(inDataSet[1..nrows], NAMED(nameOut)); 
     
   ENDMACRO;
   
 
-  
-  
+  EXPORT NROWS(inDataSet) := FUNCTIONMACRO
+    /*  -------------------------------------------------------------
+      Produce a count based on the given grouping variables. Takes a 
+      string so multiple values can be given
+
+      inDataSet - the dataset to count
+      GroupColumns - the columns to group on
+      -------------------------------------------------------------
+  */ 
+    IMPORT std;
+
+    LOCAL nameOut := 'COUNT' + std.str.tolowercase(REGEXREPLACE('[^a-z0-9]', #TEXT(inDataSet), '', NOCASE));
     
+    RETURN OUTPUT(COUNT(inDataSet), NAMED(nameOut)); 
+    
+  ENDMACRO; 
+  
 END;
 
 
