@@ -1,5 +1,4 @@
-﻿IMPORT DataScience.Tools.TransformTools as tt;
-IMPORT DataScience.Operations_Flat_Full as off;
+﻿IMPORT $.^.TransformTools as tt;
 
 //make a basic table
 testTable    := DATASET([{155,'aa', 'p'}, {245,'baa', 'p'}, {987,'ca', 'p'}, {987,'ca', 'p'}, {123,'ca', 'p'}], {INTEGER diff, STRING reason; STRING Ps});   
