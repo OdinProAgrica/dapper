@@ -3,17 +3,17 @@ Functions and macros that make HPCC easier and faster to code in. Currently brok
 
 - [Documentation](#Documentation)
 - [Installation](#Installation)
-- [Transform Tools](#Transform Tools)
-  * [Data Transformations](#Data Transformations)
+- [Transform Tools](#Transform-Tools)
+  * [Data Transformations](#Data-Transformations)
   * [Duplicates](#Duplicates)
-  * [Column Transforms](#Column Transforms)
+  * [Column Transforms](#Column-Transforms)
   * [Filters](#Filters)
   * [Arrangement](#Arrangement)
   * [Outputs](#Outputs)
   * [Summaries](#Summaries)
-- [String Tools](#String Tools)
-  * [Regex Loop](#Regex Loop)
-- [Issues, Bugs, Comments? ](# Issues, Bugs, Comments?)
+- [String Tools](#String-Tools)
+  * [Regex Loop](#Regex-Loop)
+- [Issues, Bugs, Comments? ](#Issues-Bugs-Comments)
     
 ## Documentation
 The package's github is available at: https://github.com/OdinProAgrica/hpcctools
@@ -60,7 +60,7 @@ IMPORT hpcctools.TransformTools as tt;
 ### Regex Loop
 ![](./docs/img/RegexLoop.PNG)
 
-## Issues, Bugs, Comments? 
+## Issues Bugs Comments? 
 Please use the package's github: https://github.com/OdinProAgrica/hpcctools
 
 Any contributions are also welcome.
