@@ -406,7 +406,7 @@ EXPORT TransformTools := MODULE
                     // SORT(DISTRIBUTE(inputDataSet, HASH(#EXPAND(SortOn))), #EXPAND(SortOn), LOCAL), 
                     // SORT(inputDataSet, #EXPAND(SortOn))
                   // );
-    SORT(inputDataSet, #EXPAND(SortOn)
+    sortedDs := SORT(inputDataSet, #EXPAND(SortOn));
     RETURN sortedDs;
   ENDMACRO; 
   

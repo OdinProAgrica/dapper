@@ -81,8 +81,6 @@ EXPORT StringTools := MODULE
     RETURN aStr2;
   END; 
   
-
-  
   
   EXPORT makeBOW(STRING aStr) := FUNCTION
     /*------------------------------------------------------
