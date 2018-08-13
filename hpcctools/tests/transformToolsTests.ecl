@@ -5,10 +5,7 @@ testTable    := DATASET([{155,'aa', 'p'}, {245,'baa', 'p'}, {987,'ca', 'p'}, {98
 filterDS     :=  DATASET([{155,'aa'}, {245,'baa'}], {INTEGER crap; STRING filterColumn;});    
 filterDS1Col :=  DATASET([{'aa'}, {'baa'}], {STRING filterColumn;});
 
-// TODO: _TXT tests!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-// ASSERT(t.names(filterDS1Col) = 'filterColumn', FAIL); 
+//Deselfer
 ASSERT(tt.deselfer(testTable, reason + std.str.touppercase(reason)) = 'LEFT.reason + std . str . touppercase( LEFT.reason)', FAIL);
 
 //Drop and select tests
@@ -18,13 +15,19 @@ ASSERT(tt.select(testTable, 'diff, Ps') = dropResult, FAIL);
 
 //Filter tests
 FilterResult1 := DATASET([{155,'aa', 'p'}, {245,'baa', 'p'}], {INTEGER diff, STRING reason; STRING Ps});   
-FilterResult2 := DATASET([{245,'baa', 'p'}], {INTEGER diff, STRING reason; STRING Ps});  
+FilterResult2 := DATASET([{987,'ca', 'p'}, {987,'ca', 'p'}, {123,'ca  ', 'p'}], {INTEGER diff, STRING reason; STRING Ps}); 
+
+tt.head(filterresult2);
+FR2test := tt.FilterSet(testTable, reason,  ['baa', 'aa'], FALSE) ;
+tt.head(FR2test);
+ 
 ASSERT(tt.FilterSet(testTable, reason,  ['aa', 'baa']) = FilterResult1, FAIL);
-ASSERT(tt.FilterSet(testTable, reason,  ['aa', 'ca'], FALSE) = FilterResult2, FAIL);
+ASSERT(tt.FilterSet(testTable, reason,  ['baa', 'aa'], FALSE) = FilterResult2, FAIL);
+
 
 ASSERT(tt.Filter(testTable, filterDS, reason, filterColumn) = FilterResult1, FAIL);
 ASSERT(tt.Filter(testTable, filterDS1Col, reason, filterColumn) = FilterResult1, FAIL);
-// ASSERT(t.Filter(testTable, filterDS, reason, filterColumn, FALSE) = FilterResult2, FAIL);
+ASSERT(tt.Filter(testTable, filterDS, reason, filterColumn, FALSE) = FilterResult2, FAIL);
 
 //rename tests
 renameResult := DATASET([{'aa', 'p', 155}, {'baa', 'p', 245}, {'ca', 'p', 987}, {'ca', 'p', 987}, {'ca', 'p', 123}], {STRING reason; STRING Ps; INTEGER newdiff;});   
@@ -37,10 +40,11 @@ ASSERT(tt.duplicated(testTable, reason) = DuplicatedResult, FAIL);
 //distinct tests
 DistinctResult1 := DATASET([{155, 'aa', 'p'}, {245, 'baa', 'p'}, {987, 'ca', 'p'}, {123, 'ca', 'p'}], {INTEGER diff, STRING reason; STRING Ps});   
 DistinctResult2 := DATASET([{155, 'aa', 'p'}, {245, 'baa', 'p'}, {987, 'ca', 'p'}], {INTEGER diff, STRING reason; STRING Ps});   
-DistinctResult3 := DATASET([{155, 'aa', 'p'}, {245, 'baa', 'p'}, {123, 'ca', 'p'}], {INTEGER diff, STRING reason; STRING Ps});   
-// ASSERT(t.distinct(testTable, diff) = DistinctResult1, FAIL);
-ASSERT(tt.distinct_asis(testTable, reason) = DistinctResult2, FAIL);
-// ASSERT(t.distinct(testTable, diff+reason) = DistinctResult3, FAIL);
+DistinctResult3 := DATASET([{155, 'aa', 'p'}, {245, 'baa', 'p'}, {123, 'ca', 'p'}, {987, 'ca', 'p'}], {INTEGER diff, STRING reason; STRING Ps});   
+
+ASSERT(SORT(tt.distinct(testTable, 'diff'), diff) = SORT(DistinctResult1, diff), FAIL);
+ASSERT(SORT(tt.distinct_asis(testTable, reason), reason) = SORT(DistinctResult2, reason), FAIL);
+ASSERT(SORT(tt.distinct(testTable, 'diff, reason'), diff+reason) = SORT(DistinctResult3, diff+reason), FAIL);
 
 //Append tests
 AppendResult1 := DATASET([{155,'aa', 'p', 'aaaa'}, {245,'baa', 'p', 'baabaa'}, {987,'ca', 'p', 'caca'}, {987,'ca', 'p', 'caca'}, {123,'ca', 'p', 'caca'}], {INTEGER diff, STRING reason; STRING Ps; STRING x;});   ;
@@ -63,34 +67,20 @@ ASSERT(tt.mutate(testTable, reason, REGEXREPLACE('a', reason, 'z')) = mutateResu
 ASSERT(tt.mutate(testTable, reason, REGEXREPLACE('a', reason, 'z')) = mutateResult3, FAIL);
 ASSERT(tt.mutate(testTable, SELF.reason, REGEXREPLACE('a', LEFT.reason, 'z')) = mutateResult3, FAIL);
 
-//arrane tests
+//arrange tests
 arrangeResult := DATASET([{123,'ca', 'p'}, {155,'aa', 'p'}, {245,'baa', 'p'}, {987,'ca', 'p'}, {987,'ca', 'p'}], {INTEGER diff, STRING reason; STRING Ps;});   
 ASSERT(tt.arrange_asis(testTable, diff) = arrangeResult, FAIL);
 
 // CountN tests
-coutnResult := DATASET([{'aa', 1}, {'baa', 1}, {'ca', 3}], {STRING reason; INTEGER n;}); 
-tt.arrange_asis(tt.CountN(testTable, 'reason'), reason);
-tt.arrange_asis(tt.CountN(testTable, 'reason, ps'), reason);
-coutnResult;
-// ASSERT(t.arrange(t.CountN(testTable, 'reason'), reason) = coutnResult, FAIL);
+countnUnsorted := tt.CountN(testTable, 'reason');
+countnTest := tt.arrange(countnUnsorted, 'reason');
+coutnResult := DATASET([{'aa', 1}, {'baa', 1}, {'ca', 3}], RECORDOF(countnTest)); 
+ASSERT(countnTest = coutnResult, FAIL);
   
+//Output functions - Must be tested manually
 tt.head(testTable);
 tt.head(filterDS, 2);
-tt.to_csv(testTable, '~ROB::TEMP::ACSV');
-
-
-/* IMPORT DataScience.Operations_Flat_Full as off;
-   
-   ops := off.opproduct;
-   
-   t.arrange(t.CountN(ops, 'cropzoneentityuid'), n);
-   t.arrange(TABLE(ops, {STRING cropzone := ops.cropzoneentityuid; INTEGER n := COUNT(GROUP);}, cropzoneentityuid), n);
-   t.arrange(TABLE(ops, {STRING cropzone := ops.cropzoneentityuid; INTEGER n := COUNT(GROUP);}, cropzoneentityuid, MERGE), n);
-*/
-
-
-
-
-
-
-
+tt.nrows(testTable);
+tt.nrows(filterDS);
+tt.to_csv(testTable, '~ROB::TEMP::ACSV', 1);
+tt.to_thor(testTable, '~ROB::TEMP::ATHOR', 1);

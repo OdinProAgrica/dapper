@@ -1,12 +1,24 @@
 ﻿  /*  -------------------------------------------------------------
+      This MODULE has been created to ease the proces of data exploration in 
+      ECL. Ever wanted to quickly combine two columns without writing a project?
+      Wanted to output to CSV but had to lookup the syntax? Do a grouped Count
+      without writing a RECORD definition? Then this package is for you! The
+      main aim is to make exploration and QA quicker, more logical and easier 
+      to read quickly by using shorthand notation and descriptive verbs. Try 
+      it, we know you'll love it! Inspired by the very excellent dplyr package 
+      in R. 
+
       Note that to make these functions work from within a module or similar
-      make sure any function or layout calls are shared. 
+      make sure any function or layout calls are shared. Also, you MUST
+      have imported transformtools as tt otherwise internal imports will
+      break.
 
       Dev note, always trim(,ALL) a #TEXT command, it adds spaces
       -------------------------------------------------------------
   */
 	
-	//TODO: Should all functions have a LOCAL inDS := inDataSet? This resolves any concatenations or filters before you start the process but may cause massive slowdown as the compiler MIGHT read it and seperates out the projects
+	//TODO: Should all functions have a LOCAL inDS := inDataSet? This resolves any concatenations or filters before you start the process 
+ // but may cause massive slowdown as the compiler MIGHT read it and thus seperate out the projects
   
 
 EXPORT TransformTools := MODULE
@@ -16,7 +28,9 @@ EXPORT TransformTools := MODULE
       Function takes a dataset and returns the names of all the columns as
       'name1, name2....' so note it returns a string that needs parsing.
 
-      inDs - the dataset to get column names from.
+      @param inDs DataSet - the dataset to get column names from.
+
+      @return - FullList - list of column names, seperated by spaces.
       -------------------------------------------------------------
   */
      IMPORT std;
@@ -54,8 +68,10 @@ EXPORT TransformTools := MODULE
       function call you will get odd results and errors. Same issue
 						for strings. In such cases specify LEFT and you'll be fine. 
 
-      inDs - the dataset to get colulmn names from.
-      inComm - the command to parse, in raw form, not string.
+      @param inDS DataSet - the dataset to get colulmn names from.
+      @param inComm ECL - the command to parse, in raw ECL form, not string.
+
+      @return - ECL - An updataed ECL command with self. and left. added.
       -------------------------------------------------------------
   */
 	
@@ -84,8 +100,10 @@ EXPORT TransformTools := MODULE
       Function takes a dataset and a string containing a list columns to  
       drop. This should take the form of 'col1, col2, col3......'
 
-      inDs - the dataset to change
-      dropCols - the columns to drop
+      @param inDS DataSet - the dataset to change
+      @param dropCols String - the columns to drop, seperaeted by ,
+
+      @return - DataSet without the given columns
       -------------------------------------------------------------
   */
     LOCAL outDS := PROJECT(inDS, 
@@ -97,10 +115,12 @@ EXPORT TransformTools := MODULE
 
    EXPORT DROP_ASIS(inDS, dropCol) := FUNCTIONMACRO
   /*  -------------------------------------------------------------
-      Function takes a single column (not a string) to drop
+      Function takes a single column name as ECL (not a string) to drop
 
-      inDs - the dataset to change
-      dropCol - the column to drop
+      @param inDS DataSet - the dataset to change
+      @param dropCol ECL - the column to drop
+
+      @return - DataSet without the given column
       -------------------------------------------------------------
   */
     LOCAL outDS := PROJECT(inDS, 
@@ -114,9 +134,11 @@ EXPORT TransformTools := MODULE
   /*  -------------------------------------------------------------
       Function renames given column in the input DS
 
-      inDs - the dataset to change
-      currentName - current column name
-      newName - name to replace current with
+      @param inDS DataSet - the dataset to change
+      @param currentName ECL - current column name
+      @param newName ECL - name to replace current with
+
+      @return - DataSet with renamed column
       -------------------------------------------------------------
   */
   
@@ -139,36 +161,39 @@ EXPORT TransformTools := MODULE
       Function takes a dataset and a string containing a list columns to  
       keep. This should take the form of 'col1, col2, col3......'
 
-      inDs - the dataset to change
-      keepCols - the columns to keep
+      @param inDS DataSet - the dataset to change
+      @param keepCols String - the columns to keep
+      
+      @return - DataSet with all other columns dropped
       -------------------------------------------------------------
   */     
 						//This line is a bodge, yes. What it does is prevent an error when you select all columns in a DS
 						//Can happen, especially if you use this for function calls
 						LOCAL tempDS := tt.append(inDS, INTEGER1, THISISATEMPORARYFIELDADDEDBYROBMANSFIELDON20180301, 1);
 			
-					 LOCAL dropCols := {RECORDOF(inDS) AND NOT [#EXPAND(keepCols)]};
-      LOCAL outRec   := {RECORDOF(inDS) AND NOT dropCols};
+					 LOCAL dropCols := {RECORDOF(tempDS) AND NOT [#EXPAND(keepCols)]};
+      LOCAL outRec   := {RECORDOF(tempDS) AND NOT dropCols};
       LOCAL outDS    := PROJECT(inDS, TRANSFORM(outRec, SELF := LEFT));
     
 						RETURN outDS;
   ENDMACRO;
   
 	
-  EXPORT SELECT_ASIS(inDS, keepCols) := FUNCTIONMACRO
+  EXPORT SELECT_ASIS(inDS, keepCol) := FUNCTIONMACRO
   /*  -------------------------------------------------------------
       Function takes a dataset and a the name of a column to keep
 
-      inDs - the dataset to change
-      keepCol - the columns to keep
+      @param inDS DataSet - the dataset to change
+      @param keepCol ECL - the column to keep
+      
+      @return - DataSet with all but one column dropped
       -------------------------------------------------------------
   */
 	
 						//This line is a bodge, yes. What it does is prevent an error when you select all columns in a DS
 						//Can happen, especially if you use this for function calls
 						LOCAL tempDS := tt.append(inDS, INTEGER1, THISISATEMPORARYFIELDADDEDBYROBMANSFIELDON20180301, 1);
-						
-      LOCAL dropCols := {RECORDOF(inDS) AND NOT [keepCols]};
+      LOCAL dropCols := {RECORDOF(inDS) AND NOT [keepCol]};
       LOCAL outRec   := {RECORDOF(inDS) AND NOT dropCols};
       LOCAL outDS    := PROJECT(inDS, TRANSFORM(outRec, SELF := LEFT));
     RETURN outDS;
@@ -178,14 +203,16 @@ EXPORT TransformTools := MODULE
   EXPORT MUTATE(inDS, mutateColIn, comm) := FUNCTIONMACRO
    /*  -------------------------------------------------------------
       Function performs a transformation command on the given DS. 
-      SELF definition must already exist in the source DS, if you 
+      column definition must already exist in the source DS, if you 
       want to create a new column use append. Note that you may supply
 						a transform without SELF or LEFT. It will be parsed with 
 						DeSelfer function. 
 
-      inDs - the dataset to change
-      mutateColIn - column to mutate
-      comm - transform command
+      @param inDS DataSet - the dataset to change
+      @param String - mutateColIn - column to mutate
+      @param comm ECL- transform command
+
+      @return - DataSet with updated column
       -------------------------------------------------------------
   */
   
@@ -201,14 +228,18 @@ EXPORT TransformTools := MODULE
 		
   EXPORT MUTATE_OLD(inDS, comm) := FUNCTIONMACRO
    /*  -------------------------------------------------------------
+      **DEPRECATION WARNING**
+
       Function performs a transformation command on the given DS. 
       SELF definition must already exist in the source DS, if you 
       want to create a new column use append. Unlike the new form
 						(above) this version requires the full SELF.x := LEFT.y 
-						transform.
+						transform. Kept for backwards compatability
 
-      inDs - the dataset to change
-      comm - transform command
+      @param inDs DataSet - the dataset to change
+      @param comm ECL - transform command
+
+      @return - DataSet with updated column
       -------------------------------------------------------------
   */
     LOCAL outDS := PROJECT(inDS, 
@@ -226,10 +257,12 @@ EXPORT TransformTools := MODULE
 						that you do not need to specify SELF or LEFT, these are added at 
 						runtime using DeSelfer function.
       
-      inDs - the dataset to change
-      colType - the type of the column to add
-      colName - the name of the column to add
-      comm - transform command
+      @param inDS DataSet - the dataset to change
+      @param colType ECL - the type of the column to add
+      @param colName ECL - the name of the column to add
+      @param comm ECL - transform command
+
+      @return - DataSet with updated column
       -------------------------------------------------------------
   */
     LOCAL outDS := PROJECT(inDS, 
@@ -242,14 +275,18 @@ EXPORT TransformTools := MODULE
   
   EXPORT APPEND_OLD(inDS, colType, colName, comm) := FUNCTIONMACRO
     /*  -------------------------------------------------------------
+      **DEPRECATION WARNING**
+
       Function creates a new column in the inserted DS, dictated by 
       colType and colName. The transform for the new column is dictated
       by the comm command. Only one column can be added at a time.
       
-      inDs - the dataset to change
-      colType - the type of the column to add
-      colName - the name of the column to add
-      comm - transform command
+      @param inDs - the dataset to change
+      @param colType ECL - the type of the column to add
+      @param colName ECL - the name of the column to add
+      @param comm ECL - transform command
+
+      @return - DataSet with added column
       -------------------------------------------------------------
   */
     LOCAL outDS := PROJECT(inDS, 
@@ -270,10 +307,15 @@ EXPORT TransformTools := MODULE
       determine if you are filtering for x IN y (true) or x NOT IN y 
       (false).
 
-      inDs - the dataset to change
-      aCol - the column in inDS to filter on
-      filterSetIn - a set to filter upon
-      isin - do you want the filterset to be in the column (true) or not (false)
+      Note that using two datasets and tt.filter() is faster and 
+      preferred in most cases. 
+
+      @param inDS DataSet - the dataset to change
+      @param aCol ECL - the column in inDS to filter on
+      @param filterSetIn Set - a set to filter upon
+      @param isin Boolean - do you want the filterset to be in the column (true) or not (false)
+
+      @return - DataSet - Filtered Dataset
       -------------------------------------------------------------
   */
       
@@ -295,22 +337,24 @@ EXPORT TransformTools := MODULE
 						the relevant column names. The isin command (defaulted to true) will 
       determine if you are filtering for x IN y (true) or x NOT IN y 
       (false).
+
       Note that the input is deduped before filtering, no need to do this
       yourself. 
 
-      inDs - the dataset to change
-      filterDS - the DS to filter on
-      inCol - the column in the original dataset
-      filterCol - the column in the dataset to filter by
-      isin - do you want the filter to be in the column (true) or not (false)
+      @param inDS DataSet - the dataset to change
+      @param filterDS DataSet - the DS to filter by
+      @param inCol ECL - the column in the original dataset
+      @param filterCol ECL- the column in the dataset to filter by
+      @param isin Boolean - do you want the filter to be in the column (true) or not (false)
+
+      @return - DataSet - Filtered Dataset
       -------------------------------------------------------------*/
 
       LOCAL FilterColDS := TABLE(filterDS, {TYPEOF(filterDS.filterCol) filterCol := filterDS.filterCol});
       LOCAL uniqueDS    := DEDUP(SORT(DISTRIBUTE(FilterColDS, HASH(filterCol)), filterCol, LOCAL), filterCol, LOCAL);
       LOCAL filteredDS  := IF(isin,
-																												JOIN(inDS, uniqueDS, LEFT.inCol = RIGHT.filterCol, TRANSFORM(RECORDOF(LEFT), SELF := LEFT), INNER),
-																												JOIN(inDS, uniqueDS, LEFT.inCol = RIGHT.filterCol, TRANSFORM(RECORDOF(LEFT), SELF := LEFT), LEFT ONLY));  
-                        
+																												JOIN(inDS, uniqueDS, LEFT.inCol = RIGHT.filterCol, TRANSFORM(RECORDOF(LEFT), SELF := LEFT), INNER, SMART),
+																												JOIN(inDS, uniqueDS, LEFT.inCol = RIGHT.filterCol, TRANSFORM(RECORDOF(LEFT), SELF := LEFT), LEFT ONLY, SMART));  
       LOCAL outDS := filteredDS;
     RETURN outDS;
   ENDMACRO;  
@@ -323,9 +367,11 @@ EXPORT TransformTools := MODULE
 						Note that this only takes a single column name (although concatenated 
 						columns are allowed(but, careful! I'd add a seperator there!))
 
-      inDs - the dataset to change
-      DedupOn - column to distribute by (and dedup on if other parameters not given)
-      DistributeFlag - if FALSE then don't re-distribute
+      @param inDS DataSet - the dataset to change
+      @param DedupOn ECL - column to distribute by (and dedup on if other parameters not given)
+      @param DistributeFlag Boolean - if FALSE then don't re-distribute
+
+      @return - DataSet that has been deduped
 
       TODO: allow DedupOn to be '' and dedup on whole dataset. 
       -------------------------------------------------------------
@@ -341,13 +387,15 @@ EXPORT TransformTools := MODULE
   /*  -------------------------------------------------------------
       Performs a dedup with optional distribution, if only DistributeOn 
       parameter given then it's sorted and deduped on the same value.
-						Unlike the primary call (above) this version can take a string in 
+						Unlike the _ASIS call (above) this version can take a string in 
 						the form of 'col1, col2, col3....' allowing multiple columns to be 
 						used. 
 
-      inDs - the dataset to change
-      DedupOn - columns to distribute by and dedup on
-      DistributeFlag - if FALSE then don't re-distribute
+      @param inDS DataSet - the dataset to change
+      @param DedupOn String - columns to distribute by and dedup on, comma seperated
+      @param DistributeFlag Boolean - if FALSE then don't re-distribute
+
+      @return - DataSet that has been deduped
 
       TODO: allow dedup to be '' and distribute on whole dataset. 
       -------------------------------------------------------------
@@ -365,11 +413,11 @@ EXPORT TransformTools := MODULE
   /*  -------------------------------------------------------------
       Arranges the input data set by the given column name, takes a single
 						column (not a string, see ARRANGE_TXT for that functionality). 
-						performs an optional distribute, first (defaults to true). 
 
-      inDs - the dataset to change
-      SortOn - column to Sort on
-      DistributeFlag - if FALSE then don't re-distribute
+      @param inDS DataSet - the dataset to change
+      @param SortOn ECL - column to arrange by
+
+      @return - DataSet that has been sorted
 
       TODO: allow sorton to be '' and sort on whole dataset. 
       -------------------------------------------------------------
@@ -390,11 +438,11 @@ EXPORT TransformTools := MODULE
       Arranges the input data set by the given column name, takes a 
 						string of column names in the form of 'col1, col2...' 
 					 (See ARRANGE for a single column call without the string). 
-						performs an optional distribute, first (defaults to true). 
 
-      inDs - the dataset to change
-      SortOn - columns to Sort on
-      DistributeFlag - if FALSE then don't re-distribute
+      @param inDS DataSet - the dataset to change
+      @param SortOn String - columns to arrange by, comma seperated
+
+      @return - DataSet that has been sorted
 
       TODO: allow sorton to be '' and sort on whole dataset. 
       -------------------------------------------------------------
@@ -410,21 +458,23 @@ EXPORT TransformTools := MODULE
     RETURN sortedDs;
   ENDMACRO; 
   
-  EXPORT ARRANGEDISTINCT(inputDataSet, DedupOn, SortOn, DistOn, DistributeFlag = TRUE) := FUNCTIONMACRO
+  EXPORT ARRANGEDISTINCT(inDS, DedupOn, SortOn, DistOn, DistributeFlag = TRUE) := FUNCTIONMACRO
   /*  -------------------------------------------------------------
       Performs a distribute/sort/distinct opeation, with less boiler plate code. 
 
-      inputDataSet - the dataset to change
-      DedupOn - column to Dedup on
-      SortOn - column to Sort on
-      DistOn - column to Distribute on
-      DistributeFlag - if FALSE then don't re-distribute
+      @param inDS DataSet - the dataset to dedup
+      @param DedupOn String - columns to Dedup on, comma seperated
+      @param SortOn String - columns to Sort on, comma seperated
+      @param DistOn  String - columns to Distribute on, comma seperated
+      @param DistributeFlag Boolean - if FALSE then don't re-distribute
+
+      @return - DataSet that has been dedupped. 
 
       TODO: allow dedup to be '' and do on whole dataset. 
       -------------------------------------------------------------
   */ 
   
-    LOCAL distdInDs := IF(DistributeFlag, DISTRIBUTE(inputDataSet, HASH32(#EXPAND(DistOn))), inputDataSet);
+    LOCAL distdInDs := IF(DistributeFlag, DISTRIBUTE(inDS, HASH32(#EXPAND(DistOn))), inDS);
     LOCAL sortedDs  := SORT(distdInDs, #EXPAND(SortOn), LOCAL);        
     LOCAL dedDS     := DEDUP(sortedDs, #EXPAND(DedupOn), LOCAL);    
     
@@ -440,8 +490,10 @@ EXPORT TransformTools := MODULE
       if you want a dedup then see: DISTINCT. New column is called:
 						duplicated_[columnName].
 
-      inputDataSet - the dataset to change
-      colName - column to check for dups on
+      @param inDS DataSet - the dataset to change
+      @param colName ECL - column to check for dups on
+
+      @return - DataSet with an extra column: duplicated_[colName]
       -------------------------------------------------------------
   */ 
   
@@ -468,8 +520,10 @@ EXPORT TransformTools := MODULE
       Produce a count based on the given grouping variables. Takes a 
       string so multiple values can be given
 
-      inDataSet - the dataset to count
-      GroupColumns - the columns to group on
+      @param inDS DataSet - the dataset to count
+      @param GroupColumns String - the columns to group on, comma seperated
+
+      @return - DataSet of counts based on grouping columns
       -------------------------------------------------------------
   */ 
 
@@ -482,54 +536,85 @@ EXPORT TransformTools := MODULE
   ENDMACRO;
   
 	
-  EXPORT TO_CSV(inDataSet, outName, EXPIRY = 365) := FUNCTIONMACRO
+  EXPORT TO_CSV(inDS, outName, EXPIRY = 365) := FUNCTIONMACRO
     /*  -------------------------------------------------------------
       Writes a CSV without having to remember the whole syntax. 
 
-      inDataSet - the dataset to output
-      outName - the CSV name, will auto add ~ if omitted
-      EXPIRY - expiry of the output, defaults to 1 year. 
+      @param inDs DataSet - the dataset to output
+      @param outName String - the CSV name, will auto add ~ if omitted
+      @param EXPIRY Integer - expiry of the output, defaults to 365 days. 
+
+      @return - String indicating write location
       -------------------------------------------------------------
   */ 
   
     outNameCorr := IF(REGEXFIND('~', outName, NOCASE), outName, '~' + outName);
-    OUTPUT(inDataSet, , outNameCorr, OVERWRITE, CSV(HEADING(SINGLE), QUOTE('"')), EXPIRE(EXPIRY), OVERWRITE);
+    OUTPUT(inDS, , outNameCorr, OVERWRITE, CSV(HEADING(SINGLE), QUOTE('"')), EXPIRE(EXPIRY), OVERWRITE);
 
     RETURN 'CSV Writen to: ' + outName;
   ENDMACRO;
   
   
-  EXPORT HEAD(inDataSet, /* nameIn = '' ,*/ nrows = 100) := FUNCTIONMACRO
+  EXPORT TO_THOR(inDS, outName, EXPIRY = 365) := FUNCTIONMACRO
     /*  -------------------------------------------------------------
-      Ouputs a table as a named output with only the top few rows visible
+      Writes a thor file without having to remember the whole syntax.
+ 
+      @param inDs DataSet - the dataset to output
+      @param outName String - the CSV name, will auto add ~ if omitted
+      @param EXPIRY Ineger - expiry of the output, defaults to 365 days. 
 
-      inDataSet - the dataset to output
-      nrows - rows to display, defaults to 100. 
+      @return - String indicating write location
+      -------------------------------------------------------------
+  */ 
+  
+    outNameCorr := IF(REGEXFIND('~', outName, NOCASE), outName, '~' + outName);
+    OUTPUT(inDS, ,outNameCorr, THOR, EXPIRE(EXPIRY), OVERWRITE);
+
+    RETURN 'THOR file Writen to: ' + outName;
+  ENDMACRO;
+  
+  
+  EXPORT HEAD(inDS, /* nameIn = '' ,*/ nrows = 100) := FUNCTIONMACRO
+    /*  -------------------------------------------------------------
+      Ouputs a table as a named output with only the top few rows visible.
+
+      Do note that multiple calls to the same dataset name will error out your
+      workunit!
+
+      @param inDS DataSet - the dataset to output
+      @param nrows Integer - rows to display, defaults to 100. 
+
+      @return - Output of the required length and the name of the dataset
       -------------------------------------------------------------
   */ 
   
     // LOCAL nameOut := IF(nameIn = '', REGEXREPLACE('[^a-z0-9]', #TEXT(inDataSet), '', NOCASE), REGEXREPLACE('[^a-z0-9]', nameIn, '', NOCASE));
-    LOCAL nameOut := REGEXREPLACE('[^a-z0-9]', #TEXT(inDataSet), '', NOCASE);
+    LOCAL nameOut := REGEXREPLACE('[^a-z0-9]', #TEXT(inDS), '', NOCASE);
     
-    RETURN OUTPUT(inDataSet[1..nrows], NAMED(nameOut)); 
+    RETURN OUTPUT(inDS[1..nrows], NAMED(nameOut)); 
     
   ENDMACRO;
   
 
-  EXPORT NROWS(inDataSet) := FUNCTIONMACRO
+  EXPORT NROWS(inDS) := FUNCTIONMACRO
     /*  -------------------------------------------------------------
-      Produce a count based on the given grouping variables. Takes a 
-      string so multiple values can be given
+      Counts the rows in a dataset and produces an output with a sensible 
+      name. This allows you to quickly view counts without having to create
+      a named output box or new DataSet. 
 
-      inDataSet - the dataset to count
-      GroupColumns - the columns to group on
+      Do note that multiple calls to the same dataset name will error out your
+      workunit!
+
+      @param inDS DataSet - the dataset to count
+
+      @return - Output of the row number and the name COUNT[dataset name]
       -------------------------------------------------------------
   */ 
     IMPORT std;
 
-    LOCAL nameOut := 'COUNT' + std.str.tolowercase(REGEXREPLACE('[^a-z0-9]', #TEXT(inDataSet), '', NOCASE));
+    LOCAL nameOut := 'COUNT' + std.str.tolowercase(REGEXREPLACE('[^a-z0-9]', #TEXT(inDS), '', NOCASE));
     
-    RETURN OUTPUT(COUNT(inDataSet), NAMED(nameOut)); 
+    RETURN OUTPUT(COUNT(inDS), NAMED(nameOut)); 
     
   ENDMACRO; 
   
