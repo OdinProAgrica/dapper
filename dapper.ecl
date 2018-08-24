@@ -11,4 +11,7 @@
       EXPORT Version := '0.1.0';
       EXPORT PlatformVersion := '6.0.0';
     END;
+    
+    EXPORT transformtools := $.transformtools;
+    EXPORT stringtools := $.stringtools;
 END;
