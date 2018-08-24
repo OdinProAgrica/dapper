@@ -1,4 +1,4 @@
-# hpcctools
+# dapper
 Functions and macros that make HPCC easier and faster to code in. Currently broken down into transform tools for data transformation and string tools for standard string tidying. 
 
 - [Documentation](#documentation)
@@ -16,12 +16,12 @@ Functions and macros that make HPCC easier and faster to code in. Currently brok
 - [Issues, Bugs, Comments? ](issues-bugs-comments)
     
 ## Documentation
-The package's github is available at: https://github.com/OdinProAgrica/hpcctools
+The package's github is available at: https://github.com/OdinProAgrica/dapper
 
 This package is released under GNU GPLv3 Licence: https://www.gnu.org/licenses/gpl-3.0.en.html
 
 ## Installation
-Copy the hpcctools folder into an ECL repository (or add the folder to your IDE's environment), you can then import the relevent modules.
+Copy the dapper folder into an ECL repository (or add the folder to your IDE's environment), you can then import the relevent modules.
 
 **Do note that the standard nomenclature for importing the modules should be respected.** This is because each module references its own functions, requiring a known import name. Modules should always be imported as:
 
@@ -29,7 +29,7 @@ Copy the hpcctools folder into an ECL repository (or add the folder to your IDE'
 * StringTools: st
 
 For example: 
-IMPORT hpcctools.TransformTools as tt;
+IMPORT dapper.TransformTools as tt;
 
 ## Transform Tools
 
@@ -61,6 +61,6 @@ IMPORT hpcctools.TransformTools as tt;
 ![](./docs/img/RegexLoop.PNG)
 
 ## Issues Bugs Comments? 
-Please use the package's github: https://github.com/OdinProAgrica/hpcctools
+Please use the package's github: https://github.com/OdinProAgrica/dapper
 
 Any contributions are also welcome.
