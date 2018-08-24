@@ -34,31 +34,31 @@ IMPORT dapper.TransformTools as tt;
 ## Transform Tools
 
 ### Data Transformations
-![](./docs/img/DataTransformations.PNG)
+![](https://github.com/mansfieldbitter/dappperImages/blob/master/TransformTools/DataTransformations.PNG)
 
 ### Duplicates
-![](./docs/img/DupsDedups.PNG)
+![](https://github.com/mansfieldbitter/dappperImages/blob/master/TransformTools/DupsDedups.PNG)
 
 ### Column Transforms
-![](./docs/img/Columns.PNG)
+![](https://github.com/mansfieldbitter/dappperImages/blob/master/TransformTools/Columns.PNG)
 
 ### Filters
-![](./docs/img/Filters.PNG)
+![](https://github.com/mansfieldbitter/dappperImages/blob/master/TransformTools/Filters.PNG)
 
 ### Arrangement
-![](./docs/img/Arrange.PNG)
+![](https://github.com/mansfieldbitter/dappperImages/blob/master/TransformTools/Arrange.PNG)
 
 ### Outputs
-![](./docs/img/Outputs.PNG)
+![](https://github.com/mansfieldbitter/dappperImages/blob/master/TransformTools/Outputs.PNG)
 
 ### Summaries
-![](./docs/img/Summaries.PNG)
+![](https://github.com/mansfieldbitter/dappperImages/blob/master/TransformTools/Summaries.PNG)
 
 ## String Tools
-![](./docs/img/StringTools.PNG)
+![](https://github.com/mansfieldbitter/dappperImages/blob/master/StringTools/StringTools.PNG)
 
 ### Regex Loop
-![](./docs/img/RegexLoop.PNG)
+![](https://github.com/mansfieldbitter/dappperImages/blob/master/StringTools/RegexLoop.PNG)
 
 ## Issues Bugs Comments? 
 Please use the package's github: https://github.com/OdinProAgrica/dapper
