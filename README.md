@@ -39,6 +39,8 @@ Copy the dapper folder into an ECL repository (or add the folder to your IDE's e
 For example: 
 IMPORT dapper.TransformTools as tt;
 
+**inDS and OutDS are reserved** You may find you get weird errors if you use these variable names, this will be fixed in a later release
+
 ## Transform Tools
 
 ### Data Transformations
