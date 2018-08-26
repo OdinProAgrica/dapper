@@ -8,10 +8,10 @@
       EXPORT License := 'https://www.gnu.org/licenses/gpl-3.0.en.html';
       EXPORT Copyright := 'Copyright (C) 2018 Proagrica';
       EXPORT DependsOn := [];
-      EXPORT Version := '0.1.0';
+      EXPORT Version := '0.1.1';
       EXPORT PlatformVersion := '6.0.0';
     END;
     
     EXPORT transformtools := $.transformtools;
-    EXPORT stringtools := $.stringtools;
+    EXPORT stringtools    := $.stringtools;
 END;
