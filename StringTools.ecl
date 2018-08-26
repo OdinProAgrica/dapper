@@ -3,21 +3,20 @@
 EXPORT StringTools := MODULE
   
   EXPORT regexLoopRec := {STRING Regex; STRING repl};
-  EXPORT regexLoop(STRING inStr, DATASET(regexLoopRec) regexDS, BOOLEAN noCaseRegex = TRUE, BOOLEAN TidyToo = TRUE) := FUNCTION
-    
-    /*  -------------------------------------------------------------
-      Loops through two sets and conducts a number of regex substitutions. 
-      Takes a database containing regex and replacement (see above RECORD, RegexLoopRec). 
-
-      Note this NOCASES by default. 
-
-      @param inStr String - text to be replaced
-      @param regexDS DataSet - See above recordset (RegexLoopRec). List of from and to strings, from can be a regex and replacement can contain capture groups. 
-      @param noCaseRegex Boolean - Should the regex be conducted with nocase? Defaults to TRUE
-      @param TidyToo Boolean - Shoulde the strings be lowercased and trimmed left and right before commencing? Defaults to TRUE
-
-      @return - String with all regexs applied in order
-      -------------------------------------------------------------*/        
+  EXPORT regexLoop(STRING inStr, DATASET(regexLoopRec) regexDS, BOOLEAN noCaseRegex = TRUE, BOOLEAN TidyToo = TRUE) := FUNCTION  
+  /**
+   * Loops through two sets and conducts a number of regex substitutions. 
+   * Takes a database containing regex and replacement (see above RECORD, RegexLoopRec). 
+   *
+   * Note this NOCASES by default. 
+   *
+   * @param inStr  text to be replaced
+   * @param regexDS See above recordset (RegexLoopRec). List of from and to strings, from can be a regex and replacement can contain capturegroups. 
+   * @param noCaseRegex Should the regex be conducted with nocase? Defaults to TRUE
+   * @param TidyToo Should the strings be lowercased and trimmed left and right before commencing? Defaults to TRUE
+   *
+   * @return    String with all regexs applied in order
+   */        
     LOCAL aString := IF(TidyToo, TRIM(std.Str.ToLowerCase(inStr), LEFT, RIGHT), inStr);
     LOCAL regexDSBlankRow := DATASET([{' ',' '}], regexLoopRec);
     LOCAL regexDSconcat := regexDSBlankRow + regexDS;
@@ -36,15 +35,14 @@ EXPORT StringTools := MODULE
   
 
   EXPORT LongestWord (STRING InWords, STRING seperator = ' ') := FUNCTION       
-
-    /*  -------------------------------------------------------------
-      Takes a multi word string and returns just the longest word
-
-      @param InWords String - collection of words
-      @param seperator String - word seperator, defaults to space
-
-      @return - String of the longest word
-      -------------------------------------------------------------*/    
+  /**
+   * Takes a multi word string and returns just the longest word
+   *
+   * @param InWords collection of words
+   * @param seperator   word separator, defaults to space
+   *
+   * @return    String of the longest word
+   */    
       
     SplitWords := STD.Str.SplitWords(InWords, seperator);
     WordDS := DATASET(SplitWords, {STRING words}); //Convert to DS
@@ -66,14 +64,14 @@ EXPORT StringTools := MODULE
 
 
   EXPORT NumberSpacing (STRING InWords) := FUNCTION
-     /*  -------------------------------------------------------------
-      Helps to create regex matchihng strings by allowing optional spaces between numbers.
-      Also controlls for presence of hyphens.
-
-      @param InWords String - Text to be modified
-
-      @return - text with optional regex spaces between numbers
-      -------------------------------------------------------------*/    
+  /**  
+   * Helps to create regex matching strings by allowing optional spaces between numbers.
+   * Also controls for presence of hyphens.
+   * 
+   * @param InWords Text to be modified
+   * 
+   * @return    text with optional regex spaces between numbers
+   */    
       
     ExtNumbers   := REGEXREPLACE('([0-9])'    , InWords     , '[ ]?$1[ ]?'); 
     noHyph       := REGEXREPLACE('[ ]?-[ ]?'  , ExtNumbers  , '[ ]?');
@@ -85,16 +83,15 @@ EXPORT StringTools := MODULE
   
   
   EXPORT ShortestWordDistance (STRING inString1, STRING inString2) := FUNCTION
-
-     /*  -------------------------------------------------------------
-      Does a pairwise comparison of all words in each string, 
-      returns the shortest distance between any two words. 
-
-      @param inString1 String - Text to be compared 1
-      @param inString2 String - Text to be compared 2
-
-      @return - text of closest word present in both. Or '' if none
-      -------------------------------------------------------------*/    
+  /**
+   * Does a pairwise comparison of all words in each string, 
+   * returns the shortest distance between any two words. 
+   * 
+   * @param inString1   Text to be compared 1
+   * @param inString2   Text to be compared 2
+   * 
+   * @return    text of closest word present in both. Or '' if none
+   */    
   //Extract must have's first as cannot be matching on two word strings and cannot be considering numbers as equal to letters.   
     split1 := DATASET(STD.Str.SplitWords(inString1, ' '), {STRING words;});
     split2 := DATASET(STD.Str.SplitWords(inString2, ' '), {STRING words;});
@@ -119,15 +116,15 @@ EXPORT StringTools := MODULE
   
   
   EXPORT allWordsPresentRegex (STRING aStr, STRING sep = ' ') := FUNCTION
-     /*  -------------------------------------------------------------
-      Create a regex that takes each word in the input string and 
-      states 'all these must be present to match'
-
-      @param aStr String - Text to be converted
-      @param sep String - word seperator, defaults to ' '
-
-      @return - Regex that will find all words in a string in any order
-      -------------------------------------------------------------*/        
+  /** 
+   * Create a regex that takes each word in the input string and 
+   * states 'all these must be present to match'
+   *
+   * @param aStr    Text to be converted
+   * @param sep word seperator, defaults to ' '
+   *
+   * @return    Regex that will find all words in a string in any order
+   */        
     aStr1 := REGEXREPLACE(sep, aStr, '\\\\b)(?=.*\\\\b');
     aStr2 := '^(?=.*\\b' + aStr1 + '\\b).*$';
     RETURN aStr2;
@@ -135,17 +132,16 @@ EXPORT StringTools := MODULE
   
   
   EXPORT makeBOW(STRING aStr, STRING sep = ' ') := FUNCTION
-    
-     /*  -------------------------------------------------------------
-      Generates a unique, alphabetised word list from a string. 
-
-      @param aStr String - Text to be converted
-      @param sep String - word seperator, defaults to ' '
-
-      @return - an alphabetised list of all words present. 
-
-      TODO: SHOULD BE A MACRO, THIS IS CONVOLUTED. 
-      -------------------------------------------------------------*/        
+  /**
+   * Generates a unique, alphabetised word list from a string. 
+   *
+   * @param aStr    Text to be converted
+   * @param sep word seperator, defaults to ' '
+   *
+   * @return    an alphabetised list of all words present. 
+   *
+   *  TODO: SHOULD BE A MACRO, THIS IS CONVOLUTED. 
+   */        
     
     lower        := std.str.tolowercase(aStr);
     noPunct      := REGEXREPLACE('[^0-9a-z]', lower, ' ');
@@ -162,21 +158,18 @@ EXPORT StringTools := MODULE
   
   
   EXPORT regexLoopOld(inStr, regex, replacement) := FUNCTIONMACRO
-  
-    /*  -------------------------------------------------------------
-      
-      ***DEPRICATION WARNING*** Use new version (at top of this module!)
-
-      Loops through two sets and conducts a number of regex substitutions. 
-      Takes two Sets as regex and replacement.
-
-
-      @param inStr - a string to correct
-      @param regex - a set containing regex statements to sub
-      @param replacement - what to sub the regex statements with
-
-      @return - string with all regexes applied in order
-      -------------------------------------------------------------*/    
+  /**
+   * DEPRICATION WARNING Use new version (at top of this module!)
+   *
+   * Loops through two sets and conducts a number of regex substitutions. 
+   * Takes two Sets as regex and replacement.
+   *
+   * @param inStr   a string to correct
+   * @param regex   a set containing regex statements to sub
+   * @param replacement what to sub the regex statements with
+   *
+   * @return    string with all regexs applied in order
+   */    
 
     IMPORT std;
     
