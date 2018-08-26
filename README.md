@@ -21,8 +21,16 @@ The package's github is available at: https://github.com/OdinProAgrica/dapper
 This package is released under GNU GPLv3 Licence: https://www.gnu.org/licenses/gpl-3.0.en.html
 
 ## Installation
-Copy the dapper folder into an ECL repository (or add the folder to your IDE's environment), you can then import the relevent modules.
 
+### Option 1: bundles
+From your commandline (provided you have clienttools installed and on your path) run: 
+*ecl bundle info -v https://github.com/OdinProAgrica/dapper.git*
+If you want a specific version use that version's branch, for details see the help in **ecl bundle install**.
+
+### Option 2: Manual
+Copy the dapper folder into an ECL repository (or add the folder to your IDE's environment), you can then import the relevent modules. You can get zips of each version in the releases section of the github: https://github.com/OdinProAgrica/dapper/releases
+
+## Important Note!!!!!!!
 **Do note that the standard nomenclature for importing the modules should be respected.** This is because each module references its own functions, requiring a known import name. Modules should always be imported as:
 
 * TransformTools: tt
