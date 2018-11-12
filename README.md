@@ -44,31 +44,31 @@ IMPORT dapper.TransformTools as tt;
 ## Transform Tools
 
 ### Data Transformations
-![](https://github.com/mansfieldbitter/dappperImages/blob/master/TransformTools/DataTransformations.PNG)
+![](https://github.com/odinproagrica/DocumentationImages/blob/master/TransformTools/DataTransformations.PNG)
 
 ### Duplicates
-![](https://github.com/mansfieldbitter/dappperImages/blob/master/TransformTools/DupsDedups.PNG)
+![](https://github.com/odinproagrica/DocumentationImages/blob/master/TransformTools/DupsDedups.PNG)
 
 ### Column Transforms
-![](https://github.com/mansfieldbitter/dappperImages/blob/master/TransformTools/Columns.PNG)
+![](https://github.com/odinproagrica/DocumentationImages/blob/master/TransformTools/Columns.PNG)
 
 ### Filters
-![](https://github.com/mansfieldbitter/dappperImages/blob/master/TransformTools/Filters.PNG)
+![](https://github.com/odinproagrica/DocumentationImages/blob/master/TransformTools/Filters.PNG)
 
 ### Arrangement
-![](https://github.com/mansfieldbitter/dappperImages/blob/master/TransformTools/Arrange.PNG)
+![](https://github.com/odinproagrica/DocumentationImages/blob/master/TransformTools/Arrange.PNG)
 
 ### Outputs
-![](https://github.com/mansfieldbitter/dappperImages/blob/master/TransformTools/Outputs.PNG)
+![](https://github.com/odinproagrica/DocumentationImages/blob/master/TransformTools/Outputs.PNG)
 
 ### Summaries
-![](https://github.com/mansfieldbitter/dappperImages/blob/master/TransformTools/Summaries.PNG)
+![](https://github.com/odinproagrica/DocumentationImages/blob/master/TransformTools/Summaries.PNG)
 
 ## String Tools
-![](https://github.com/mansfieldbitter/dappperImages/blob/master/StringTools/StringTools.PNG)
+![](https://github.com/odinproagrica/DocumentationImages/blob/master/StringTools/StringTools.PNG)
 
 ### Regex Loop
-![](https://github.com/mansfieldbitter/dappperImages/blob/master/StringTools/RegexLoop.PNG)
+![](https://github.com/odinproagrica/DocumentationImages/blob/master/StringTools/RegexLoop.PNG)
 
 ## Issues Bugs Comments? 
 Please use the package's github: https://github.com/OdinProAgrica/dapper
