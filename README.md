@@ -1,3 +1,5 @@
+![](https://github.com/OdinProAgrica/DocumentationImages/blob/master/dapperLogo.png)
+
 # dapper
 Functions and macros that make HPCC easier and faster to code in. Currently broken down into transform tools for data transformation and string tools for standard string tidying. 
 
