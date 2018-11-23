@@ -26,7 +26,7 @@ This package is released under GNU GPLv3 Licence: https://www.gnu.org/licenses/g
 
 ### Option 1: bundles
 From your commandline (provided you have clienttools installed and on your path) run: 
-*ecl bundle info -v https://github.com/OdinProAgrica/dapper.git*
+*ecl bundle install -v https://github.com/OdinProAgrica/dapper.git*
 If you want a specific version use that version's branch, for details see the help in **ecl bundle install**.
 
 ### Option 2: Manual
