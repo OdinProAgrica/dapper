@@ -25,23 +25,31 @@ This package is released under GNU GPLv3 Licence: https://www.gnu.org/licenses/g
 ## Installation
 
 ### Option 1: bundles
-From your commandline (provided you have clienttools installed and on your path) run: 
+From your commandline (provided you have clienttools installed and on your path) run:
+
+```sh
 *ecl bundle install -v https://github.com/OdinProAgrica/dapper.git*
+```
+
 If you want a specific version use that version's branch, for details see the help in **ecl bundle install**.
 
 ### Option 2: Manual
-Copy the dapper folder into an ECL repository (or add the folder to your IDE's environment), you can then import the relevant modules. You can get zips of each version in the releases section of the github: https://github.com/OdinProAgrica/dapper/releases
+Copy the dapper folder into an ECL repository (or add the folder to your IDE's environment), you can then import the relevant 
+modules. You can get zips of each version in the releases section of the github: https://github.com/OdinProAgrica/dapper/releases
 
-## Important Note!!!!!!!
+## Important Notes
 **Do note that the standard nomenclature for importing the modules should be respected.** This is because each module references its own functions, requiring a known import name. Modules should always be imported as:
 
 * TransformTools: tt
 * StringTools: st
 
 For example: 
+```ECL
 IMPORT dapper.TransformTools as tt;
+```
 
-**inDS and OutDS are reserved** You may find you get weird errors if you use these variable names, this will be fixed in a later release
+**inDS and OutDS are reserved** You may find you get weird errors if you use these variable names, this will be fixed in a later 
+release.
 
 ## Transform Tools
 
