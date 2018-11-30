@@ -5,6 +5,10 @@ testTable    := DATASET([{155,'aa', 'p'}, {245,'baa', 'p'}, {987,'ca', 'p'}, {98
 filterDS     :=  DATASET([{155,'aa'}, {245,'baa'}], {INTEGER crap; STRING filterColumn;});    
 filterDS1Col :=  DATASET([{'aa'}, {'baa'}], {STRING filterColumn;});
 
+testTableGoodConcat := DATASET([{155,'1aa', 'p'}, {245,'1baa', 'p'}, {987,'1ca', 'p'}, {987,'1ca', 'p'}, {123,'1ca', 'p'}], {INTEGER diff, STRING reason; STRING Ps});   
+testTableBadConcat  := DATASET([{155,'1aa', 'p'}, {245,'1baa', 'p'}, {987,'1ca', 'p'}, {987,'1ca', 'p'}, {123,'1ca', 'p'}], {INTEGER reason, STRING diff; STRING Ps});   
+
+
 //Deselfer
 ASSERT(tt.deselfer(testTable, reason + std.str.touppercase(reason)) = 'LEFT.reason + std . str . touppercase( LEFT.reason)', FAIL);
 
@@ -76,6 +80,17 @@ countnUnsorted := tt.CountN(testTable, 'reason');
 countnTest := tt.arrange(countnUnsorted, 'reason');
 coutnResult := DATASET([{'aa', 1}, {'baa', 1}, {'ca', 3}], RECORDOF(countnTest)); 
 ASSERT(countnTest = coutnResult, FAIL);
+
+
+//BindRows
+boundRowsResult := DATASET([{155,'aa', 'p'}, {245,'baa', 'p'}, {987,'ca', 'p'}, {987,'ca', 'p'}, {123,'ca', 'p'},
+																										 {155,'1aa', 'p'}, {245,'1baa', 'p'}, {987,'1ca', 'p'}, {987,'1ca', 'p'}, {123,'1ca', 'p'}
+																										], {INTEGER diff, STRING reason; STRING Ps});   
+ASSERT(tt.bindrows(testTable, testTableGoodConcat) = boundRowsResult, FAIL);
+
+
+// Raise Tests - These must be manual as I can't try catch
+// tt.bindrows(testTable, testTableBadConcat);
   
 //Output functions - Must be tested manually
 tt.head(testTable);
