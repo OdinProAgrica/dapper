@@ -546,7 +546,7 @@ EXPORT TransformTools := MODULE
    */ 
   
     outNameCorr := IF(REGEXFIND('~', outName, NOCASE), outName, '~' + outName);
-    OUTPUT(inDS, , outNameCorr, OVERWRITE, CSV(HEADING(SINGLE), QUOTE('"')), EXPIRE(EXPIRY), OVERWRITE);
+    OUTPUT(inDS, , outNameCorr, CSV(HEADING(SINGLE), QUOTE('"')), EXPIRE(EXPIRY), OVERWRITE);
 
     RETURN 'CSV Writen to: ' + outName;
   ENDMACRO;
