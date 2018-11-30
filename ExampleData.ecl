@@ -1,0 +1,112 @@
+﻿
+EXPORT ExampleData := MODULE
+
+// Star wars data shamelessy pillaged from R's dplyr package which itself aquired it from SWAPI, the Star Wars API, http://swapi.co/
+	StartWarsRec := RECORD
+		STRING name;
+		REAL height;
+		REAL mass;
+		STRING hair_color;
+		STRING skin_color;
+		STRING eye_color;
+		INTEGER birth_year;
+		STRING gender;
+		STRING homeworld;
+		STRING species;
+		STRING films;
+		STRING vehicles;
+		STRING starships;
+	END;
+
+
+	EXPORT starWars := DATASET([
+	{'Luke Skywalker',172,77,'blond','fair','blue',19,'male','Tatooine','Human','Revenge of the Sith, Return of the Jedi, The Empire Strikes Back, A New Hope, The Force Awakens','Snowspeeder, Imperial Speeder Bike','X-wing, Imperial shuttle'},
+	{'C-3PO',167,75,'','gold','yellow',112,'','Tatooine','Droid','Attack of the Clones, The Phantom Menace, Revenge of the Sith, Return of the Jedi, The Empire Strikes Back, A New Hope','',''},
+	{'R2-D2',96,32,'','white, blue','red',33,'','Naboo','Droid','Attack of the Clones, The Phantom Menace, Revenge of the Sith, Return of the Jedi, The Empire Strikes Back, A New Hope, The Force Awakens','',''},
+	{'Darth Vader',202,136,'none','white','yellow',41.9,'male','Tatooine','Human','Revenge of the Sith, Return of the Jedi, The Empire Strikes Back, A New Hope','','TIE Advanced x1'},
+	{'Leia Organa',150,49,'brown','light','brown',19,'female','Alderaan','Human','Revenge of the Sith, Return of the Jedi, The Empire Strikes Back, A New Hope, The Force Awakens','Imperial Speeder Bike',''},
+	{'Owen Lars',178,120,'brown, grey','light','blue',52,'male','Tatooine','Human','Attack of the Clones, Revenge of the Sith, A New Hope','',''},
+	{'Beru Whitesun lars',165,75,'brown','light','blue',47,'female','Tatooine','Human','Attack of the Clones, Revenge of the Sith, A New Hope','',''},
+	{'R5-D4',97,32,'','white, red','red','','','Tatooine','Droid','A New Hope','',''},
+	{'Biggs Darklighter',183,84,'black','light','brown',24,'male','Tatooine','Human','A New Hope','','X-wing'},
+	{'Obi-Wan Kenobi',182,77,'auburn, white','fair','blue-gray',57,'male','Stewjon','Human','Attack of the Clones, The Phantom Menace, Revenge of the Sith, Return of the Jedi, The Empire Strikes Back, A New Hope','Tribubble bongo','Jedi starfighter, Trade Federation cruiser, Naboo star skiff, Jedi Interceptor, Belbullab-22 starfighter'},
+	{'Anakin Skywalker',188,84,'blond','fair','blue',41.9,'male','Tatooine','Human','Attack of the Clones, The Phantom Menace, Revenge of the Sith','Zephyr-G swoop bike, XJ-6 airspeeder','Trade Federation cruiser, Jedi Interceptor, Naboo fighter'},
+	{'Wilhuff Tarkin',180,'','auburn, grey','fair','blue',64,'male','Eriadu','Human','Revenge of the Sith, A New Hope','',''},
+	{'Chewbacca',228,112,'brown','unknown','blue',200,'male','Kashyyyk','Wookiee','Revenge of the Sith, Return of the Jedi, The Empire Strikes Back, A New Hope, The Force Awakens','AT-ST','Millennium Falcon, Imperial shuttle'},
+	{'Han Solo',180,80,'brown','fair','brown',29,'male','Corellia','Human','Return of the Jedi, The Empire Strikes Back, A New Hope, The Force Awakens','','Millennium Falcon, Imperial shuttle'},
+	{'Greedo',173,74,'','green','black',44,'male','Rodia','Rodian','A New Hope','',''},
+	{'Jabba Desilijic Tiure',175,1358,'','green-tan, brown','orange',600,'hermaphrodite','Nal Hutta','Hutt','The Phantom Menace, Return of the Jedi, A New Hope','',''},
+	{'Wedge Antilles',170,77,'brown','fair','hazel',21,'male','Corellia','Human','Return of the Jedi, The Empire Strikes Back, A New Hope','Snowspeeder','X-wing'},
+	{'Jek Tono Porkins',180,110,'brown','fair','blue','','male','Bestine IV','Human','A New Hope','','X-wing'},
+	{'Yoda',66,17,'white','green','brown',896,'male','','Yoda\'s species','Attack of the Clones, The Phantom Menace, Revenge of the Sith, Return of the Jedi, The Empire Strikes Back','',''},
+	{'Palpatine',170,75,'grey','pale','yellow',82,'male','Naboo','Human','Attack of the Clones, The Phantom Menace, Revenge of the Sith, Return of the Jedi, The Empire Strikes Back','',''},
+	{'Boba Fett',183,78.2,'black','fair','brown',31.5,'male','Kamino','Human','Attack of the Clones, Return of the Jedi, The Empire Strikes Back','','Slave 1'},
+	{'IG-88',200,140,'none','metal','red',15,'none','','Droid','The Empire Strikes Back','',''},
+	{'Bossk',190,113,'none','green','red',53,'male','Trandosha','Trandoshan','The Empire Strikes Back','',''},
+	{'Lando Calrissian',177,79,'black','dark','brown',31,'male','Socorro','Human','Return of the Jedi, The Empire Strikes Back','','Millennium Falcon'},
+	{'Lobot',175,79,'none','light','blue',37,'male','Bespin','Human','The Empire Strikes Back','',''},
+	{'Ackbar',180,83,'none','brown mottle','orange',41,'male','Mon Cala','Mon Calamari','Return of the Jedi, The Force Awakens','',''},
+	{'Mon Mothma',150,'','auburn','fair','blue',48,'female','Chandrila','Human','Return of the Jedi','',''},
+	{'Arvel Crynyd',0,0,'brown','fair','brown','','male','','Human','Return of the Jedi','','A-wing'},
+	{'Wicket Systri Warrick',88,20,'brown','brown','brown',8,'male','Endor','Ewok','Return of the Jedi','',''},
+	{'Nien Nunb',160,68,'none','grey','black','','male','Sullust','Sullustan','Return of the Jedi','','Millennium Falcon'},
+	{'Qui-Gon Jinn',193,89,'brown','fair','blue',92,'male','','Human','The Phantom Menace','Tribubble bongo',''},
+	{'Nute Gunray',191,90,'none','mottled green','red','','male','Cato Neimoidia','Neimodian','Attack of the Clones, The Phantom Menace, Revenge of the Sith','',''},
+	{'Finis Valorum',170,'','blond','fair','blue',91,'male','Coruscant','Human','The Phantom Menace','',''},
+	{'Jar Jar Binks',196,66,'none','orange','orange',52,'male','Naboo','Gungan','Attack of the Clones, The Phantom Menace','',''},
+	{'Roos Tarpals',224,82,'none','grey','orange','','male','Naboo','Gungan','The Phantom Menace','',''},
+	{'Rugor Nass',206,0,'none','green','orange','','male','Naboo','Gungan','The Phantom Menace','',''},
+	{'Ric Olié',183,0,'brown','fair','blue','','male','Naboo','','The Phantom Menace','','Naboo Royal Starship'},
+	{'Watto',137,0,'black','blue, grey','yellow','','male','Toydaria','Toydarian','Attack of the Clones, The Phantom Menace','',''},
+	{'Sebulba',112,40,'none','grey, red','orange','','male','Malastare','Dug','The Phantom Menace','',''},
+	{'Quarsh Panaka',183,'','black','dark','brown',62,'male','Naboo','','The Phantom Menace','',''},
+	{'Shmi Skywalker',163,'','black','fair','brown',72,'female','Tatooine','Human','Attack of the Clones, The Phantom Menace','',''},
+	{'Darth Maul',175,80,'none','red','yellow',54,'male','Dathomir','Zabrak','The Phantom Menace','Sith speeder','Scimitar'},
+	{'Bib Fortuna',180,0,'none','pale','pink','','male','Ryloth','Twi\'lek','Return of the Jedi','',''},
+	{'Ayla Secura',178,55,'none','blue','hazel',48,'female','Ryloth','Twi\'lek','Attack of the Clones, The Phantom Menace, Revenge of the Sith','',''},
+	{'Dud Bolt',94,45,'none','blue, grey','yellow','','male','Vulpter','Vulptereen','The Phantom Menace','',''},
+	{'Gasgano',122,0,'none','white, blue','black','','male','Troiken','Xexto','The Phantom Menace','',''},
+	{'Ben Quadinaros',163,65,'none','grey, green, yellow','orange','','male','Tund','Toong','The Phantom Menace','',''},
+	{'Mace Windu',188,84,'none','dark','brown',72,'male','Haruun Kal','Human','Attack of the Clones, The Phantom Menace, Revenge of the Sith','',''},
+	{'Ki-Adi-Mundi',198,82,'white','pale','yellow',92,'male','Cerea','Cerean','Attack of the Clones, The Phantom Menace, Revenge of the Sith','',''},
+	{'Kit Fisto',196,87,'none','green','black','','male','Glee Anselm','Nautolan','Attack of the Clones, The Phantom Menace, Revenge of the Sith','',''},
+	{'Eeth Koth',171,0,'black','brown','brown','','male','Iridonia','Zabrak','The Phantom Menace, Revenge of the Sith','',''},
+	{'Adi Gallia',184,50,'none','dark','blue','','female','Coruscant','Tholothian','The Phantom Menace, Revenge of the Sith','',''},
+	{'Saesee Tiin',188,0,'none','pale','orange','','male','Iktotch','Iktotchi','The Phantom Menace, Revenge of the Sith','',''},
+	{'Yarael Poof',264,0,'none','white','yellow','','male','Quermia','Quermian','The Phantom Menace','',''},
+	{'Plo Koon',188,80,'none','orange','black',22,'male','Dorin','Kel Dor','Attack of the Clones, The Phantom Menace, Revenge of the Sith','','Jedi starfighter'},
+	{'Mas Amedda',196,0,'none','blue','blue','','male','Champala','Chagrian','Attack of the Clones, The Phantom Menace','',''},
+	{'Gregar Typho',185,85,'black','dark','brown','','male','Naboo','Human','Attack of the Clones','','Naboo fighter'},
+	{'Cordé',157,0,'brown','light','brown','','female','Naboo','Human','Attack of the Clones','',''},
+	{'Cliegg Lars',183,0,'brown','fair','blue',82,'male','Tatooine','Human','Attack of the Clones','',''},
+	{'Poggle the Lesser',183,80,'none','green','yellow',0,'male','Geonosis','Geonosian','Attack of the Clones, Revenge of the Sith','',''},
+	{'Luminara Unduli',170,56.2,'black','yellow','blue',58,'female','Mirial','Mirialan','Attack of the Clones, Revenge of the Sith','',''},
+	{'Barriss Offee',166,50,'black','yellow','blue',40,'female','Mirial','Mirialan','Attack of the Clones','',''},
+	{'Dormé',165,0,'brown','light','brown','','female','Naboo','Human','Attack of the Clones','',''},
+	{'Dooku',193,80,'white','fair','brown',102,'male','Serenno','Human','Attack of the Clones, Revenge of the Sith','Flitknot speeder',''},
+	{'Bail Prestor Organa',191,0,'black','tan','brown',67,'male','Alderaan','Human','Attack of the Clones, Revenge of the Sith','',''},
+	{'Jango Fett',183,79,'black','tan','brown',66,'male','Concord Dawn','Human','Attack of the Clones','',''},
+	{'Zam Wesell',168,55,'blonde','fair, green, yellow','yellow','','female','Zolan','Clawdite','Attack of the Clones','Koro-2 Exodrive airspeeder',''},
+	{'Dexter Jettster',198,102,'none','brown','yellow','','male','Ojom','Besalisk','Attack of the Clones','',''},
+	{'Lama Su',229,88,'none','grey','black','','male','Kamino','Kaminoan','Attack of the Clones','',''},
+	{'Taun We',213,0,'none','grey','black','','female','Kamino','Kaminoan','Attack of the Clones','',''},
+	{'Jocasta Nu',167,0,'white','fair','blue','','female','Coruscant','Human','Attack of the Clones','',''},
+	{'Ratts Tyerell',79,15,'none','grey, blue','unknown','','male','Aleen Minor','Aleena','The Phantom Menace','',''},
+	{'R4-P17',96,0,'none','silver, red','red, blue','','female','','','Attack of the Clones, Revenge of the Sith','',''},
+	{'Wat Tambor',193,48,'none','green, grey','unknown','','male','Skako','Skakoan','Attack of the Clones','',''},
+	{'San Hill',191,0,'none','grey','gold','','male','Muunilinst','Muun','Attack of the Clones','',''},
+	{'Shaak Ti',178,57,'none','red, blue, white','black','','female','Shili','Togruta','Attack of the Clones, Revenge of the Sith','',''},
+	{'Grievous',216,159,'none','brown, white','green, yellow','','male','Kalee','Kaleesh','Revenge of the Sith','Tsmeu-6 personal wheel bike','Belbullab-22 starfighter'},
+	{'Tarfful',234,136,'brown','brown','blue','','male','Kashyyyk','Wookiee','Revenge of the Sith','',''},
+	{'Raymus Antilles',188,79,'brown','light','brown','','male','Alderaan','Human','Revenge of the Sith, A New Hope','',''},
+	{'Sly Moore',178,48,'none','pale','white','','female','Umbara','','Attack of the Clones, Revenge of the Sith','',''},
+	{'Tion Medon',206,80,'none','grey','black','','male','Utapau','Pau\'an','Revenge of the Sith','',''},
+	{'Finn',0,0,'black','dark','dark','','male','','Human','The Force Awakens','',''},
+	{'Rey',0,0,'brown','light','hazel','','female','','Human','The Force Awakens','',''},
+	{'Poe Dameron',0,0,'brown','light','brown','','male','','Human','The Force Awakens','','T-70 X-wing fighter'},
+	{'BB8',0,0,'none','none','black','','none','','Droid','The Force Awakens','',''},
+	{'Captain Phasma',0,0,'unknown','unknown','unknown',0,'female','','','The Force Awakens','',''},
+	{'Padmé Amidala',165,45,'brown','light','brown',46,'female','Naboo','Human','Attack of the Clones, The Phantom Menace, Revenge of the Sith','','H-type Nubian yacht, Naboo star skiff, Naboo fighter'}
+	]
+	, StartWarsRec);
+END;

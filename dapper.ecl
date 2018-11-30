@@ -14,4 +14,5 @@
     
     EXPORT transformtools := $.transformtools;
     EXPORT stringtools    := $.stringtools;
+    EXPORT ExampleData    := $.ExampleData;
 END;
