@@ -68,8 +68,7 @@ get me wrong, sometimes an old school `PROJECT` is better. I leave it to the rea
 right tools, right job. It is worth noting however that, even if you use several transformTools statements in a row, the 
 compiler is clever enough to combine this into a single operation under the bonnet, minimising dapper's speed impact. 
 
-The bundle itself is broken down into two sets of tools. This post will focus on our transform tools. I 
-will do a separate post on stringtools (and our in development bundle geodapper) in the future. Watch this space!
+The bundle itself is broken down into two sets of tools:
 
 ### Transform Tools
 
@@ -259,11 +258,11 @@ OUTPUT(StarWars, NAMED('starWars'));
 //Fill blank species with unknown
 //Create a BMI for each character
 fillblankHomeAndBMI := 
-		PROJECT(StarWars, 
-									TRANSFORM({RECORDOF(LEFT); REAL BMI;},
-																			SELF.BMI := LEFT.mass / LEFT.Height^2;
-																			SELF.species := IF(LEFT.species = '', 'Unkn.', LEFT.species);
-																			SELF := LEFT;));
+  PROJECT(StarWars, 
+   TRANSFORM({RECORDOF(LEFT); REAL BMI;},
+      SELF.BMI := LEFT.mass / LEFT.Height^2;
+      SELF.species := IF(LEFT.species = '', 'Unkn.', LEFT.species);
+      SELF := LEFT;));
 OUTPUT(fillblankHomeAndBMI, NAMED('fillblankHomeAndBMI'));
 
 
@@ -275,8 +274,8 @@ OUTPUT(sortedBMI, NAMED('sortedBMI'));
 
 //How many of each species are there?
 CountRec := RECORD
-		STRING Species := sortedBMI.species;
-		INTEGER n := COUNT(GROUP);
+  STRING Species := sortedBMI.species;
+  INTEGER n := COUNT(GROUP);
 END;
 
 species := TABLE(sortedBMI, CountRec, species);
