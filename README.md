@@ -11,6 +11,7 @@ Functions and macros that make HPCC easier and faster to code in. Currently brok
   * [Column Transforms](#column-transforms)
   * [Filters](#filters)
   * [Arrangement](#arrangement)
+  * [Concatenation](#Concatenation)
   * [Outputs](#outputs)
   * [Summaries](#summaries)
 - [String Tools](#string-tools)
@@ -86,6 +87,9 @@ The bundle itself is broken down into two sets of tools:
 
 #### Arrangement
 ![](https://github.com/odinproagrica/DocumentationImages/blob/master/TransformTools/Arrange.PNG)
+
+#### Concatenation
+![](https://github.com/odinproagrica/DocumentationImages/blob/master/TransformTools/Bind.PNG)
 
 #### Outputs
 ![](https://github.com/odinproagrica/DocumentationImages/blob/master/TransformTools/Outputs.PNG)
