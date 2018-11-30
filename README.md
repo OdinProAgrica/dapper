@@ -5,6 +5,7 @@ Functions and macros that make HPCC easier and faster to code in. Currently brok
 
 - [Documentation](#documentation)
 - [Installation](#installation)
+- [Important Notes](#important-notes)
 - [Transform Tools](#transform-tools)
   * [Data Transformations](#data-transformations)
   * [Duplicates](#duplicates)
@@ -16,6 +17,7 @@ Functions and macros that make HPCC easier and faster to code in. Currently brok
   * [Summaries](#summaries)
 - [String Tools](#string-tools)
   * [Regex Loop](#regex-loop)
+- [Example Workflow ](#example-workflow )
 - [Issues, Bugs, Comments? ](issues-bugs-comments)
     
 ## Documentation
@@ -61,7 +63,7 @@ IMPORT dapper.TransformTools as tt;
 **inDS and OutDS are reserved!** You may find you get weird errors if you use these variable names, this will be fixed in a later 
 release.
 
-## So, what can it do? 
+## What can it do 
 
 Once installed, dapper can be used to create scripts using simple verbs which can increase readability and decrease coding 
 mistakes. In short, it reduces the amount of time you spend thinking about *how* to do a job, you can just get on with it. Don’t 
@@ -104,7 +106,7 @@ The bundle itself is broken down into two sets of tools:
 ![](https://github.com/odinproagrica/DocumentationImages/blob/master/StringTools/RegexLoop.PNG)
 
 
-## How does it work? 
+## Example Workflow 
 
 Okay, so I'm going to give you an ECL script which (assuming you have installed dapper using the bundle method described above) 
 will work on your system (fingers crossed!). 
