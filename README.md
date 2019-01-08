@@ -147,10 +147,9 @@ tt.head(sortedspecies);
 
 //Finally let's look at unique hair/eye colour combinations:
 colourData := tt.select(StarWars, 'hair_color, eye_color'); 
-unqiueColours := tt.distinct(colourData, 'hair_color, eye_color'); //see arrangedistinct() for fancy sort/dedup operations. 
+unqiueColours := tt.distinct(colourData, 'hair_color, eye_color'); 
+	//see arrangedistinct() for fancy sort/dedup 
 tt.head(unqiueColours);
-tt.countn(unqiueColours);
-
 
 //and save our results
 tt.to_csv(sortedBMI, 'ROB::TEMP::STARWARSCSV');
@@ -218,9 +217,10 @@ even hand multiple columns to it and it'll handle them all perfectly.
 ```ECL
 //Finally let's look at unique hair/eye colour combinations:
 colourData := tt.select(StarWars, 'hair_color, eye_color'); 
-uniqueColours := tt.distinct(colourData, 'hair_color, eye_color'); 
-tt.head(uniqueColours);
-tt.countn(uniqueColours);
+unqiueColours := tt.distinct(colourData, 'hair_color, eye_color'); 
+	//see arrangedistinct() for fancy sort/dedup 
+tt.head(unqiueColours);
+
 ```
 
 `select` (and it's partner function `drop`) will help in quickly sub-setting data, note too the use of distinct which is 
