@@ -614,48 +614,21 @@ EXPORT TransformTools := MODULE
   ENDMACRO; 
 	
 
-  EXPORT bindRows(inDS, bindDS) := FUNCTIONMACRO
+  EXPORT bindRows(inDS, bindDS, combineCommand = '&' ) := FUNCTIONMACRO
   /**
    *   Performs a basic concatenate but checks the records first 
 			*
    *  @param inDS DataSet - the 1st dataset to bind
    *  @param bindDS DataSet - the 2nd dataset to bind
+   *  @param combineCommand String - & respects distribution, + does not. 
 			*
    *  @return - concatenated DataSet
    * 
    */ 
 	    sameRec := tt.names(inDS) = tt.names(bindDS); //OR RECORDOF(inDS) = RECORDOF(bindDS) # TODO: This check should also exist
 					ASSERT(sameRec, 'Error in tt.BindRows. The two datasets have differing layouts!!', FAIL);
-			  boundDS  := inDS + bindDS;
+			  boundDS  := inDS #EXPAND(combineCommand) bindDS;
 					return(boundDS);
   ENDMACRO;
-	
-	
-/*   EXPORT bindCol(inDS, bindDS, sortOn) := FUNCTIONMACRO
-        //THIS NEEDS SOME SERIOUS TESTING!
-   
-   					LOCAL OutRec := RECORD
-   						 RECORDOF(inDS);
-   						 RECORDOF(bindDS);
-   					END;
-   
-   					LOCAL Outrec DoColBind(inDS L, INTEGER C) := TRANSFORM
-   						R := bindDS[C];
-   						SELF := L;
-   						SELF := R;
-   					END;
-   
-   					LOCAL boundDS := PROJECT(inDS, DoColBind(LEFT, COUNTER));	
-   					
-   					return(boundDS);
-   		ENDMACRO;
-*/
 
-//transpose? & cast?: These both have the same problem. As you don't know the record structure untill the code is running HPCC complains. It's not able to generate this on the fly. 
-//melt? This is doable as you will know the record structure when you start. Take the ID column and for each unique value, filter, subset and concatenate. 
-		
 END;
-
-
-
-
